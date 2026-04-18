@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remove Pages — PDFCare</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--red:#e8452a;--red-light:#ff6b4a;--bg:#f7f7f8;--text:#1a1a2e;--text-muted:#6b7280;--border:#e5e7eb;--accent:#ef4444;--accent-light:#fef2f2;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.navbar{background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:0 20px;}
+.nav-inner{max-width:1100px;margin:0 auto;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:3px;text-decoration:none;font-weight:900;font-size:1.5rem;color:var(--text);}
+.nav-logo .heart{font-size:1.25rem;margin:0 2px;display:inline-block;animation:heartbeat 1.4s ease-in-out infinite;filter:drop-shadow(0 0 6px rgba(232,69,42,0.5));}
+.nav-logo .care{background:linear-gradient(135deg,var(--red),var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+@keyframes heartbeat{0%,100%{transform:scale(1);}14%{transform:scale(1.25);}28%{transform:scale(1);}42%{transform:scale(1.18);}56%{transform:scale(1);}}
+.nav-back{text-decoration:none;font-size:0.88rem;font-weight:600;color:var(--text-muted);padding:6px 14px;border:1.5px solid var(--border);border-radius:100px;transition:all 0.2s;}
+.nav-back:hover{border-color:var(--red);color:var(--red);}
+.tool-hero{background:white;border-bottom:1px solid var(--border);padding:48px 20px 40px;text-align:center;position:relative;overflow:hidden;}
+.hero-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--accent),#f87171);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px;box-shadow:0 8px 24px rgba(239,68,68,0.3);}
+.tool-hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:10px;letter-spacing:-0.02em;}
+.tool-hero p{font-size:1rem;color:var(--text-muted);max-width:480px;margin:0 auto 24px;line-height:1.7;}
+.feature-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.fpill{padding:5px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:100px;font-size:0.78rem;font-weight:600;color:var(--text-muted);}
+.fpill span{color:var(--accent);margin-right:4px;}
+.tool-main{max-width:1000px;margin:0 auto;padding:40px 20px;}
+.upload-zone{background:white;border:2.5px dashed var(--border);border-radius:20px;padding:64px 24px;text-align:center;cursor:pointer;transition:all 0.25s;}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--accent);box-shadow:0 8px 32px rgba(239,68,68,0.1);}
+.upload-icon{font-size:4rem;margin-bottom:16px;display:block;}
+.upload-zone h3{font-size:1.2rem;font-weight:800;margin-bottom:8px;}
+.upload-zone p{font-size:0.9rem;color:var(--text-muted);margin-bottom:24px;}
+.upload-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 32px;background:linear-gradient(135deg,var(--accent),#f87171);color:white;border:none;border-radius:100px;font-size:0.92rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(239,68,68,0.3);transition:all 0.2s;}
+.upload-btn:hover{transform:translateY(-2px);}
+.workspace{display:none;}
+.workspace.show{display:block;animation:fadeUp 0.4s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+.toolbar{background:white;border:1.5px solid var(--border);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.file-name{font-size:0.9rem;font-weight:800;flex:1;}
+.file-meta{font-size:0.75rem;color:var(--text-muted);}
+.tb-btn{padding:7px 12px;border:1.5px solid var(--border);border-radius:100px;background:white;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.tb-btn:hover{border-color:var(--accent);color:var(--accent);}
+.info-bar{background:var(--accent-light);border:1.5px solid rgba(239,68,68,0.2);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.info-text{font-size:0.82rem;font-weight:700;color:var(--accent);flex:1;}
+.sel-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.sel-btn{padding:5px 11px;border:1.5px solid rgba(239,68,68,0.3);border-radius:100px;background:white;font-size:0.75rem;font-weight:700;color:var(--accent);cursor:pointer;transition:all 0.2s;}
+.sel-btn:hover{background:var(--accent);color:white;}
+.page-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-bottom:20px;}
+.page-card{background:white;border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all 0.22s;position:relative;}
+.page-card:hover{border-color:#fca5a5;}
+.page-card.marked{border-color:var(--accent);background:var(--accent-light);}
+.del-overlay{position:absolute;inset:0;background:rgba(239,68,68,0.12);opacity:0;transition:opacity 0.2s;z-index:1;pointer-events:none;}
+.page-card.marked .del-overlay{opacity:1;}
+.page-card.marked::after{content:'🗑️';position:absolute;top:6px;right:6px;font-size:1rem;z-index:2;}
+.page-preview{width:100%;aspect-ratio:0.707;background:#fff5f5;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.page-preview canvas{width:100%;height:100%;object-fit:contain;display:block;}
+.page-footer{padding:8px 10px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);}
+.pg-num{font-size:0.72rem;font-weight:700;color:var(--text-muted);}
+.del-badge{font-size:0.68rem;font-weight:800;color:var(--accent);display:none;}
+.page-card.marked .del-badge{display:block;}
+.page-card.marked .pg-num{text-decoration:line-through;color:#fca5a5;}
+.action-section{background:white;border:1.5px solid var(--border);border-radius:14px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.action-title{font-size:0.95rem;font-weight:800;margin-bottom:3px;}
+.action-sub{font-size:0.78rem;color:var(--text-muted);}
+.action-badge{display:inline-flex;padding:3px 10px;background:var(--accent-light);border-radius:100px;font-size:0.75rem;font-weight:700;color:var(--accent);}
+.action-btn{display:flex;align-items:center;gap:8px;padding:13px 36px;background:linear-gradient(135deg,var(--accent),#f87171);color:white;border:none;border-radius:100px;font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(239,68,68,0.3);transition:all 0.2s;}
+.action-btn:hover{transform:translateY(-2px);}
+.progress-section{display:none;background:white;border:1.5px solid var(--border);border-radius:20px;padding:48px 24px;text-align:center;}
+.progress-section.show{display:block;}
+.spin{font-size:3rem;animation:spin 1s linear infinite;display:inline-block;margin-bottom:16px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.result-section{display:none;background:white;border:1.5px solid var(--border);border-radius:20px;padding:36px 24px;text-align:center;}
+.result-section.show{display:block;animation:fadeUp 0.5s ease both;}
+.result-icon{font-size:3rem;margin-bottom:12px;}
+.result-title{font-size:1.4rem;font-weight:900;margin-bottom:6px;}
+.result-sub{font-size:0.88rem;color:var(--text-muted);margin-bottom:20px;}
+.result-stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;}
+.rstat{padding:14px 20px;background:var(--bg);border-radius:14px;text-align:center;}
+.rstat-val{font-size:1.4rem;font-weight:900;}
+.rstat-lbl{font-size:0.7rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:3px;}
+.result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.dl-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 36px;background:linear-gradient(135deg,var(--accent),#f87171);color:white;border:none;border-radius:100px;font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(239,68,68,0.3);text-decoration:none;transition:all 0.2s;}
+.dl-btn:hover{transform:translateY(-2px);}
+.reset-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:white;color:var(--text);border:1.5px solid var(--border);border-radius:100px;font-size:0.92rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.reset-btn:hover{border-color:var(--red);color:var(--red);}
+footer{background:white;border-top:1px solid var(--border);padding:24px 20px;text-align:center;}
+.footer-logo{font-weight:900;font-size:1.3rem;display:inline-flex;align-items:center;gap:3px;margin-bottom:6px;}
+.fh{color:var(--red);display:inline-block;animation:heartbeat 1.4s ease-in-out infinite;}
+.fc{background:linear-gradient(135deg,var(--red),var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+footer p{font-size:0.78rem;color:var(--text-muted);}
+footer a{color:var(--red);text-decoration:none;font-weight:600;}
+@media(max-width:600px){.page-grid{grid-template-columns:repeat(auto-fill,minmax(90px,1fr));}}
+</style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a href="index.html" class="nav-logo"><span>PDF</span><span class="heart">❤</span><span class="care">Care</span></a>
+  <a href="index.html" class="nav-back">← All Tools</a>
+</div></nav>
+<div class="tool-hero">
+  <div class="hero-icon">🗑️</div>
+  <h1>Remove PDF Pages</h1>
+  <p>Click pages to mark for deletion. Use smart selection tools for bulk removal. Download your cleaned PDF instantly.</p>
+  <div class="feature-pills">
+    <div class="fpill"><span>✓</span>Visual Page Selector</div>
+    <div class="fpill"><span>✓</span>Live Thumbnails</div>
+    <div class="fpill"><span>✓</span>Smart Selection Tools</div>
+    <div class="fpill"><span>✓</span>Instant Download</div>
+    <div class="fpill"><span>✓</span>100% Private</div>
+    <div class="fpill"><span>✓</span>Free Forever</div>
+  </div>
+</div>
+<div class="tool-main">
+  <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+    <span class="upload-icon">🗑️</span>
+    <h3>Drop your PDF to remove pages</h3>
+    <p>Drag & drop or click. Files never leave your device.</p>
+    <button class="upload-btn" onclick="event.stopPropagation();document.getElementById('fileInput').click()">📄 Choose PDF File</button>
+    <div style="margin-top:14px;font-size:0.75rem;color:var(--text-muted);">PDF only · Processed in your browser</div>
+  </div>
+  <input type="file" id="fileInput" accept=".pdf">
+  <div class="workspace" id="workspace">
+    <div class="toolbar">
+      <div style="flex:1"><div class="file-name" id="fileName">—</div><div class="file-meta" id="fileMeta">—</div></div>
+      <button class="tb-btn" onclick="resetTool()">✕ Change</button>
+    </div>
+    <div class="info-bar">
+      <div class="info-text">🗑️ Click pages to mark for removal — <span id="markedCount">0</span> marked</div>
+      <div class="sel-btns">
+        <button class="sel-btn" onclick="markAll()">Mark All</button>
+        <button class="sel-btn" onclick="clearAll()">Clear</button>
+        <button class="sel-btn" onclick="markOdd()">Odd Pages</button>
+        <button class="sel-btn" onclick="markEven()">Even Pages</button>
+        <button class="sel-btn" onclick="invertSel()">Invert</button>
+      </div>
+    </div>
+    <div class="page-grid" id="pageGrid"></div>
+    <div class="action-section">
+      <div><div class="action-title">Ready to remove?</div><div class="action-sub">Marked: <span class="action-badge" id="actionBadge">0 pages</span></div></div>
+      <button class="action-btn" onclick="applyRemove()">🗑️ Remove Pages</button>
+    </div>
+  </div>
+  <div class="progress-section" id="progressSection"><div class="spin">⚙️</div><div class="progress-label" id="progressLabel">Removing pages...</div></div>
+  <div class="result-section" id="resultSection">
+    <div class="result-icon">✅</div>
+    <div class="result-title">Pages Removed!</div>
+    <div class="result-sub">Your PDF has been cleaned up.</div>
+    <div class="result-stats" id="resultStats"></div>
+    <div class="result-actions">
+      <a class="dl-btn" id="downloadLink" href="#" download="cleaned.pdf">⬇ Download PDF</a>
+      <button class="reset-btn" onclick="resetTool()">🔄 Remove from Another</button>
+    </div>
+  </div>
+</div>
+<footer><div class="footer-logo">PDF<span class="fh">❤</span><span class="fc">Care</span></div><p>Made with care · <a href="https://mmalam.in" target="_blank">Md Masud Alam Sardar</a> · © 2026 PDFCare</p></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+let currentFile=null,currentAB=null,pageCount=0,marked=new Set(),pdfJsDoc=null;
+const zone=document.getElementById('uploadZone');
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');const f=[...e.dataTransfer.files].find(f=>f.type==='application/pdf');if(f)handleFile(f);});
+document.getElementById('fileInput').addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0]);e.target.value='';});
+async function handleFile(f){
+  currentFile=f;currentAB=await f.arrayBuffer();
+  try{const doc=await PDFLib.PDFDocument.load(currentAB);pageCount=doc.getPageCount();}catch(e){pageCount=1;}
+  document.getElementById('uploadZone').style.display='none';
+  document.getElementById('fileName').textContent=f.name;
+  document.getElementById('fileMeta').textContent=pageCount+' pages · '+formatSize(f.size);
+  document.getElementById('workspace').classList.add('show');
+  pdfJsDoc=await pdfjsLib.getDocument({data:currentAB.slice(0)}).promise;
+  renderGrid();
+}
+async function renderGrid(){
+  const grid=document.getElementById('pageGrid');grid.innerHTML='';
+  for(let i=0;i<pageCount;i++){
+    const card=document.createElement('div');card.className='page-card';card.dataset.idx=i;
+    card.innerHTML=`<div class="del-overlay"></div><div class="page-preview" id="pp-${i}"><span style="font-size:2rem">📄</span></div><div class="page-footer"><span class="pg-num">Page ${i+1}</span><span class="del-badge">REMOVE</span></div>`;
+    card.onclick=()=>toggleMark(i);
+    grid.appendChild(card);
+    (async()=>{
+      try{
+        const page=await pdfJsDoc.getPage(i+1);const vp=page.getViewport({scale:0.5});
+        const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;c.style.cssText='width:100%;height:100%;object-fit:contain;display:block;';
+        await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+        const pp=document.getElementById('pp-'+i);if(pp){pp.innerHTML='';pp.appendChild(c);}
+      }catch(e){}
+    })();
+  }
+}
+function toggleMark(i){const card=document.querySelector(`.page-card[data-idx="${i}"]`);if(marked.has(i)){marked.delete(i);card.classList.remove('marked');}else{marked.add(i);card.classList.add('marked');}updateCount();}
+function markAll(){marked=new Set([...Array(pageCount).keys()]);document.querySelectorAll('.page-card').forEach(c=>c.classList.add('marked'));updateCount();}
+function clearAll(){marked=new Set();document.querySelectorAll('.page-card').forEach(c=>c.classList.remove('marked'));updateCount();}
+function markOdd(){clearAll();for(let i=0;i<pageCount;i+=2)toggleMark(i);}
+function markEven(){clearAll();for(let i=1;i<pageCount;i+=2)toggleMark(i);}
+function invertSel(){for(let i=0;i<pageCount;i++)toggleMark(i);}
+function updateCount(){const n=marked.size;document.getElementById('markedCount').textContent=n;document.getElementById('actionBadge').textContent=n===0?'None selected':`${n} page${n!==1?'s':''}`;}
+async function applyRemove(){
+  if(!marked.size)return alert('Please mark at least one page.');
+  if(marked.size===pageCount)return alert('You cannot remove all pages.');
+  document.getElementById('workspace').style.display='none';document.getElementById('progressSection').classList.add('show');
+  try{
+    const doc=await PDFLib.PDFDocument.load(currentAB);
+    const keep=[...Array(pageCount).keys()].filter(i=>!marked.has(i));
+    const newDoc=await PDFLib.PDFDocument.create();
+    const copied=await newDoc.copyPages(doc,keep);copied.forEach(p=>newDoc.addPage(p));
+    const bytes=await newDoc.save();
+    document.getElementById('progressSection').classList.remove('show');
+    const blob=new Blob([bytes],{type:'application/pdf'});const url=URL.createObjectURL(blob);
+    const out=currentFile.name.replace(/\.pdf$/i,'')+'-cleaned.pdf';
+    document.getElementById('downloadLink').href=url;document.getElementById('downloadLink').download=out;
+    document.getElementById('resultStats').innerHTML=`<div class="rstat"><div class="rstat-val">${pageCount}</div><div class="rstat-lbl">Original</div></div><div class="rstat"><div class="rstat-val" style="color:var(--accent)">${marked.size}</div><div class="rstat-lbl">Removed</div></div><div class="rstat"><div class="rstat-val">${keep.length}</div><div class="rstat-lbl">Remaining</div></div>`;
+    document.getElementById('resultSection').classList.add('show');
+  }catch(err){alert('Error: '+err.message);resetTool();}
+}
+function resetTool(){currentFile=null;currentAB=null;pageCount=0;marked=new Set();pdfJsDoc=null;document.getElementById('uploadZone').style.display='block';document.getElementById('workspace').style.display='';document.getElementById('workspace').classList.remove('show');document.getElementById('progressSection').classList.remove('show');document.getElementById('resultSection').classList.remove('show');document.getElementById('pageGrid').innerHTML='';}
+function formatSize(b){if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'KB';return(b/1048576).toFixed(2)+'MB';}
+</script>
+</body>
+</html>
