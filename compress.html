@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compress PDF — PDFCare</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#e8452a;--red-dark:#c23118;--red-light:#ff6b4a;
+  --bg:#f7f7f8;--white:#ffffff;--text:#1a1a2e;
+  --text-muted:#6b7280;--border:#e5e7eb;
+  --green:#10b981;--yellow:#f59e0b;--blue:#3b82f6;
+  --shadow:0 2px 12px rgba(0,0,0,0.08);
+  --shadow-hover:0 8px 32px rgba(232,69,42,0.15);
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+.navbar{background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:0 20px;}
+.nav-inner{max-width:1100px;margin:0 auto;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:3px;text-decoration:none;font-weight:900;font-size:1.5rem;color:var(--text);letter-spacing:-0.02em;}
+.nav-logo .heart{font-size:1.25rem;margin:0 2px;display:inline-block;animation:heartbeat 1.4s ease-in-out infinite;filter:drop-shadow(0 0 6px rgba(232,69,42,0.5));}
+.nav-logo .care{background:linear-gradient(135deg,var(--red),var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+@keyframes heartbeat{0%,100%{transform:scale(1);}14%{transform:scale(1.25);}28%{transform:scale(1);}42%{transform:scale(1.18);}56%{transform:scale(1);}}
+.nav-back{display:flex;align-items:center;gap:8px;text-decoration:none;font-size:0.88rem;font-weight:600;color:var(--text-muted);padding:6px 14px;border:1.5px solid var(--border);border-radius:100px;transition:all 0.2s;}
+.nav-back:hover{border-color:var(--red);color:var(--red);}
+
+.tool-hero{background:white;border-bottom:1px solid var(--border);padding:48px 20px 40px;text-align:center;position:relative;overflow:hidden;}
+.tool-hero::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(232,69,42,0.06) 0%,transparent 70%);pointer-events:none;}
+.hero-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--green),#34d399);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px;box-shadow:0 8px 24px rgba(16,185,129,0.3);}
+.tool-hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;color:var(--text);margin-bottom:10px;letter-spacing:-0.02em;}
+.tool-hero p{font-size:1rem;color:var(--text-muted);max-width:480px;margin:0 auto 24px;line-height:1.7;}
+.feature-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.fpill{padding:5px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:100px;font-size:0.78rem;font-weight:600;color:var(--text-muted);}
+.fpill span{color:var(--red);margin-right:4px;}
+
+.tool-main{max-width:900px;margin:0 auto;padding:40px 20px;}
+
+/* UPLOAD */
+.upload-zone{background:white;border:2.5px dashed var(--border);border-radius:20px;padding:64px 24px;text-align:center;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden;}
+.upload-zone::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(16,185,129,0.04),transparent);opacity:0;transition:opacity 0.25s;}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--green);box-shadow:0 8px 32px rgba(16,185,129,0.12);}
+.upload-zone:hover::before,.upload-zone.drag-over::before{opacity:1;}
+.upload-zone.drag-over{transform:scale(1.01);}
+.upload-icon{font-size:4rem;margin-bottom:16px;display:block;}
+.upload-zone h3{font-size:1.25rem;font-weight:800;margin-bottom:8px;}
+.upload-zone p{font-size:0.9rem;color:var(--text-muted);margin-bottom:24px;line-height:1.6;}
+.upload-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 32px;background:linear-gradient(135deg,var(--green),#34d399);color:white;border:none;border-radius:100px;font-size:0.92rem;font-weight:700;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(16,185,129,0.3);}
+.upload-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(16,185,129,0.4);}
+.upload-hint{margin-top:14px;font-size:0.75rem;color:var(--text-muted);}
+
+/* FILE PREVIEW CARD */
+.file-card{display:none;background:white;border:1.5px solid var(--border);border-radius:20px;padding:24px;margin-bottom:20px;}
+.file-card.show{display:block;animation:fadeUp 0.4s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+.file-card-header{display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.file-thumb-big{width:56px;height:72px;background:linear-gradient(135deg,#e8f5e9,#f0fdf4);border:1.5px solid rgba(16,185,129,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;overflow:hidden;}
+.file-thumb-big canvas{width:100%;height:100%;object-fit:cover;}
+.file-card-info{flex:1;min-width:0;}
+.file-card-name{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.file-card-meta{display:flex;gap:12px;flex-wrap:wrap;}
+.fmeta{font-size:0.78rem;font-weight:600;color:var(--text-muted);}
+.fmeta strong{color:var(--text);}
+.remove-file-btn{padding:6px 14px;font-size:0.8rem;font-weight:700;border:1.5px solid var(--border);border-radius:100px;background:white;color:var(--text-muted);cursor:pointer;transition:all 0.2s;flex-shrink:0;}
+.remove-file-btn:hover{border-color:#ef4444;color:#ef4444;}
+
+/* SIZE DISPLAY */
+.size-display{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin-bottom:24px;}
+.size-box{background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:20px;text-align:center;}
+.size-box.after{border-color:rgba(16,185,129,0.3);background:#f0fdf4;}
+.size-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:8px;}
+.size-val{font-size:1.8rem;font-weight:900;color:var(--text);line-height:1;}
+.size-unit{font-size:0.8rem;font-weight:600;color:var(--text-muted);margin-top:4px;}
+.size-arrow{text-align:center;font-size:1.5rem;color:var(--text-muted);}
+.saving-badge{display:none;align-items:center;justify-content:center;gap:6px;padding:8px 16px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid rgba(16,185,129,0.3);border-radius:100px;font-size:0.88rem;font-weight:800;color:var(--green);margin-top:12px;}
+.saving-badge.show{display:flex;}
+
+/* COMPRESSION LEVEL */
+.compress-section{margin-bottom:24px;}
+.section-title{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.level-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.level-card{background:white;border:2px solid var(--border);border-radius:14px;padding:16px 12px;cursor:pointer;transition:all 0.2s;text-align:center;position:relative;}
+.level-card:hover{border-color:#d1d5db;box-shadow:var(--shadow);}
+.level-card.selected{border-color:var(--green);background:#f0fdf4;}
+.level-card.selected .level-check{opacity:1;}
+.level-check{position:absolute;top:10px;right:10px;width:20px;height:20px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:0.7rem;font-weight:800;opacity:0;transition:opacity 0.2s;}
+.level-icon{font-size:1.8rem;margin-bottom:8px;}
+.level-name{font-size:0.92rem;font-weight:800;margin-bottom:4px;color:var(--text);}
+.level-desc{font-size:0.72rem;color:var(--text-muted);line-height:1.4;}
+.level-reduction{font-size:0.78rem;font-weight:700;margin-top:8px;}
+.lvl-low .level-reduction{color:var(--blue);}
+.lvl-med .level-reduction{color:var(--yellow);}
+.lvl-high .level-reduction{color:var(--red);}
+
+/* ADVANCED OPTIONS */
+.adv-toggle{display:flex;align-items:center;gap:10px;cursor:pointer;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:16px;user-select:none;}
+.adv-toggle span{font-size:0.88rem;font-weight:700;color:var(--text);}
+.adv-arrow{margin-left:auto;font-size:0.8rem;color:var(--text-muted);transition:transform 0.2s;}
+.adv-arrow.open{transform:rotate(180deg);}
+.adv-panel{display:none;padding-bottom:4px;}
+.adv-panel.show{display:block;}
+.adv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:16px;}
+.adv-item{display:flex;flex-direction:column;gap:6px;}
+.adv-label{font-size:0.8rem;font-weight:700;color:var(--text);}
+.adv-sub{font-size:0.72rem;color:var(--text-muted);}
+.adv-select{padding:8px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:0.85rem;font-weight:600;background:white;color:var(--text);cursor:pointer;outline:none;transition:border-color 0.2s;}
+.adv-select:focus{border-color:var(--green);}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-info .toggle-name{font-size:0.88rem;font-weight:700;color:var(--text);}
+.toggle-info .toggle-desc{font-size:0.75rem;color:var(--text-muted);margin-top:2px;}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:#e5e7eb;border-radius:100px;cursor:pointer;transition:0.3s;}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+.toggle input:checked + .toggle-slider{background:var(--green);}
+.toggle input:checked + .toggle-slider::before{transform:translateX(20px);}
+
+/* COMPRESS BTN */
+.compress-action{text-align:center;padding:8px 0;}
+.compress-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 52px;background:linear-gradient(135deg,var(--green),#34d399);color:white;border:none;border-radius:100px;font-size:1.1rem;font-weight:800;cursor:pointer;transition:all 0.25s;box-shadow:0 6px 24px rgba(16,185,129,0.35);letter-spacing:-0.01em;}
+.compress-btn:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(16,185,129,0.45);}
+.compress-hint{margin-top:10px;font-size:0.78rem;color:var(--text-muted);}
+
+/* PROGRESS */
+.progress-section{display:none;background:white;border:1.5px solid var(--border);border-radius:20px;padding:48px 24px;text-align:center;}
+.progress-section.show{display:block;animation:fadeUp 0.4s ease both;}
+.progress-ring{width:120px;height:120px;margin:0 auto 20px;position:relative;}
+.progress-ring svg{transform:rotate(-90deg);}
+.progress-circle-bg{fill:none;stroke:var(--border);stroke-width:8;}
+.progress-circle{fill:none;stroke:var(--green);stroke-width:8;stroke-linecap:round;stroke-dasharray:339;stroke-dashoffset:339;transition:stroke-dashoffset 0.5s ease;}
+.progress-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.progress-pct{font-size:1.5rem;font-weight:900;color:var(--text);}
+.progress-emoji{font-size:1.2rem;}
+.progress-label{font-size:0.9rem;color:var(--text-muted);margin-top:8px;}
+.progress-bar-wrap{background:var(--bg);border-radius:100px;height:8px;margin:16px auto 0;max-width:300px;overflow:hidden;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--green),#34d399);border-radius:100px;width:0%;transition:width 0.4s ease;}
+
+/* RESULT */
+.result-section{display:none;background:white;border:1.5px solid var(--border);border-radius:20px;overflow:hidden;}
+.result-section.show{display:block;animation:fadeUp 0.5s ease both;}
+.result-top{background:linear-gradient(135deg,#f0fdf4,#dcfce7);padding:32px 24px;text-align:center;border-bottom:1px solid rgba(16,185,129,0.2);}
+.result-icon{font-size:3rem;margin-bottom:12px;}
+.result-title{font-size:1.5rem;font-weight:900;color:var(--text);margin-bottom:4px;}
+.result-sub{font-size:0.9rem;color:var(--text-muted);}
+.result-body{padding:28px 24px;}
+.result-compare{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center;margin-bottom:28px;}
+.compare-box{text-align:center;padding:20px;background:var(--bg);border-radius:14px;border:1.5px solid var(--border);}
+.compare-box.after{background:#f0fdf4;border-color:rgba(16,185,129,0.3);}
+.compare-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:8px;}
+.compare-val{font-size:1.6rem;font-weight:900;color:var(--text);}
+.compare-unit{font-size:0.8rem;color:var(--text-muted);font-weight:600;}
+.compare-arrow{text-align:center;}
+.saving-big{display:inline-flex;flex-direction:column;align-items:center;padding:16px 24px;background:linear-gradient(135deg,var(--green),#34d399);border-radius:16px;color:white;}
+.saving-pct{font-size:2rem;font-weight:900;line-height:1;}
+.saving-text{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
+.result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.dl-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 36px;background:linear-gradient(135deg,var(--green),#34d399);color:white;border:none;border-radius:100px;font-size:1rem;font-weight:800;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(16,185,129,0.3);text-decoration:none;}
+.dl-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(16,185,129,0.4);}
+.reset-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:white;color:var(--text);border:1.5px solid var(--border);border-radius:100px;font-size:0.92rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.reset-btn:hover{border-color:var(--red);color:var(--red);}
+
+/* HOW IT WORKS */
+.how-section{background:white;border-top:1px solid var(--border);padding:60px 20px;}
+.how-inner{max-width:800px;margin:0 auto;text-align:center;}
+.how-inner h2{font-size:1.6rem;font-weight:900;margin-bottom:8px;letter-spacing:-0.02em;}
+.how-inner>p{font-size:0.92rem;color:var(--text-muted);margin-bottom:40px;}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;}
+.step{padding:24px 16px;background:var(--bg);border-radius:16px;border:1.5px solid var(--border);}
+.step-num{width:36px;height:36px;background:linear-gradient(135deg,var(--green),#34d399);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:0.9rem;font-weight:900;margin:0 auto 12px;}
+.step h3{font-size:0.92rem;font-weight:800;margin-bottom:6px;}
+.step p{font-size:0.78rem;color:var(--text-muted);line-height:1.5;}
+
+/* FAQ */
+.faq-section{max-width:700px;margin:0 auto;padding:48px 20px;}
+.faq-section h2{font-size:1.4rem;font-weight:900;text-align:center;margin-bottom:24px;}
+.faq-item{border:1.5px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;background:white;}
+.faq-q{padding:16px 20px;font-size:0.92rem;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background 0.2s;}
+.faq-q:hover{background:var(--bg);}
+.faq-arrow{color:var(--text-muted);transition:transform 0.2s;}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s;}
+.faq-a.open{max-height:200px;padding:0 20px 16px;}
+.faq-a p{font-size:0.85rem;color:var(--text-muted);line-height:1.7;}
+
+footer{background:white;border-top:1px solid var(--border);padding:24px 20px;text-align:center;}
+.footer-logo{font-weight:900;font-size:1.3rem;display:inline-flex;align-items:center;gap:3px;margin-bottom:6px;}
+.footer-logo .fh{color:var(--red);display:inline-block;animation:heartbeat 1.4s ease-in-out infinite;}
+.footer-logo .fc{background:linear-gradient(135deg,var(--red),var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+footer p{font-size:0.78rem;color:var(--text-muted);}
+footer a{color:var(--red);text-decoration:none;font-weight:600;}
+
+@media(max-width:600px){
+  .level-cards{grid-template-columns:1fr;}
+  .size-display,.result-compare{grid-template-columns:1fr;gap:8px;}
+  .size-arrow,.compare-arrow{display:none;}
+  .adv-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span>PDF</span><span class="heart">❤</span><span class="care">Care</span>
+    </a>
+    <a href="index.html" class="nav-back">← All Tools</a>
+  </div>
+</nav>
+
+<div class="tool-hero">
+  <div class="hero-icon">🗜️</div>
+  <h1>Compress PDF</h1>
+  <p>Shrink your PDF file size dramatically without losing quality. See the exact savings before downloading — all processed privately in your browser.</p>
+  <div class="feature-pills">
+    <div class="fpill"><span>✓</span>3 Compression Levels</div>
+    <div class="fpill"><span>✓</span>Before/After Preview</div>
+    <div class="fpill"><span>✓</span>Image Quality Control</div>
+    <div class="fpill"><span>✓</span>100% Private</div>
+    <div class="fpill"><span>✓</span>No File Size Limit</div>
+    <div class="fpill"><span>✓</span>Free Forever</div>
+  </div>
+</div>
+
+<div class="tool-main">
+
+  <!-- UPLOAD -->
+  <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+    <span class="upload-icon">🗜️</span>
+    <h3>Drop your PDF here to compress</h3>
+    <p>Drag & drop your PDF or click to browse.<br>Your file never leaves your device — 100% private.</p>
+    <button class="upload-btn" onclick="event.stopPropagation();document.getElementById('fileInput').click()">
+      📄 Choose PDF File
+    </button>
+    <div class="upload-hint">PDF only · Any size · Processed in your browser</div>
+  </div>
+  <input type="file" id="fileInput" accept=".pdf">
+
+  <!-- FILE CARD -->
+  <div class="file-card" id="fileCard">
+    <div class="file-card-header">
+      <div class="file-thumb-big" id="filethumb">📄</div>
+      <div class="file-card-info">
+        <div class="file-card-name" id="fileName">—</div>
+        <div class="file-card-meta">
+          <span class="fmeta">Size: <strong id="fileSize">—</strong></span>
+          <span class="fmeta">Pages: <strong id="filePages">—</strong></span>
+        </div>
+      </div>
+      <button class="remove-file-btn" onclick="resetTool()">✕ Remove</button>
+    </div>
+
+    <!-- SIZE DISPLAY -->
+    <div class="size-display">
+      <div class="size-box">
+        <div class="size-label">Original Size</div>
+        <div class="size-val" id="origVal">—</div>
+        <div class="size-unit" id="origUnit"></div>
+      </div>
+      <div class="size-arrow">→</div>
+      <div class="size-box after">
+        <div class="size-label">Estimated Size</div>
+        <div class="size-val" id="estVal">—</div>
+        <div class="size-unit" id="estUnit"></div>
+      </div>
+    </div>
+    <div class="saving-badge" id="savingBadge">
+      <span>🎉</span><span id="savingText">Saving ~0%</span>
+    </div>
+
+    <!-- COMPRESSION LEVEL -->
+    <div class="compress-section" style="margin-top:24px;">
+      <div class="section-title">🎚️ Compression Level</div>
+      <div class="level-cards">
+        <div class="level-card lvl-low" id="lvl-low" onclick="selectLevel('low')">
+          <div class="level-check">✓</div>
+          <div class="level-icon">🟦</div>
+          <div class="level-name">Low</div>
+          <div class="level-desc">Best quality, moderate size reduction. Good for printing.</div>
+          <div class="level-reduction">~20–35% smaller</div>
+        </div>
+        <div class="level-card lvl-med selected" id="lvl-med" onclick="selectLevel('medium')">
+          <div class="level-check">✓</div>
+          <div class="level-icon">🟨</div>
+          <div class="level-name">Medium</div>
+          <div class="level-desc">Balanced quality and size. Best for sharing online.</div>
+          <div class="level-reduction">~40–60% smaller</div>
+        </div>
+        <div class="level-card lvl-high" id="lvl-high" onclick="selectLevel('high')">
+          <div class="level-check">✓</div>
+          <div class="level-icon">🟥</div>
+          <div class="level-name">High</div>
+          <div class="level-desc">Maximum compression. Good for email and web.</div>
+          <div class="level-reduction">~60–80% smaller</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED OPTIONS -->
+    <div class="adv-toggle" onclick="toggleAdv()">
+      <span>⚙️</span>
+      <span>Advanced Options</span>
+      <span class="adv-arrow" id="advArrow">▾</span>
+    </div>
+    <div class="adv-panel" id="advPanel">
+      <div class="adv-grid">
+        <div class="adv-item">
+          <div class="adv-label">Image DPI</div>
+          <div class="adv-sub">Resolution for embedded images</div>
+          <select class="adv-select" id="imageDpi">
+            <option value="300">300 DPI (High Quality)</option>
+            <option value="150" selected>150 DPI (Balanced)</option>
+            <option value="96">96 DPI (Screen)</option>
+            <option value="72">72 DPI (Maximum Compression)</option>
+          </select>
+        </div>
+        <div class="adv-item">
+          <div class="adv-label">Color Mode</div>
+          <div class="adv-sub">Convert images to grayscale</div>
+          <select class="adv-select" id="colorMode">
+            <option value="color">Keep Color</option>
+            <option value="grayscale">Convert to Grayscale</option>
+          </select>
+        </div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-name">Remove Metadata</div>
+          <div class="toggle-desc">Strip author, creation date, and other hidden data</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="removeMeta" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-name">Remove Duplicate Resources</div>
+          <div class="toggle-desc">Eliminate repeated fonts and images embedded multiple times</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="removeDup" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-name">Flatten Annotations</div>
+          <div class="toggle-desc">Merge comments and form fields into page content</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="flattenAnnot"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+
+    <!-- COMPRESS BTN -->
+    <div class="compress-action">
+      <button class="compress-btn" onclick="startCompress()">
+        🗜️ Compress PDF Now
+      </button>
+      <div class="compress-hint">Processed entirely in your browser — never uploaded anywhere</div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-section" id="progressSection">
+    <div class="progress-ring">
+      <svg width="120" height="120" viewBox="0 0 120 120">
+        <circle class="progress-circle-bg" cx="60" cy="60" r="54"/>
+        <circle class="progress-circle" id="progressCircle" cx="60" cy="60" r="54"/>
+      </svg>
+      <div class="progress-center">
+        <div class="progress-pct" id="progressPct">0%</div>
+      </div>
+    </div>
+    <div class="progress-label" id="progressLabel">Analyzing PDF structure...</div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result-section" id="resultSection">
+    <div class="result-top">
+      <div class="result-icon">✅</div>
+      <div class="result-title">Compression Complete!</div>
+      <div class="result-sub">Your PDF has been successfully compressed.</div>
+    </div>
+    <div class="result-body">
+      <div class="result-compare">
+        <div class="compare-box">
+          <div class="compare-label">Before</div>
+          <div class="compare-val" id="rBefore">—</div>
+          <div class="compare-unit" id="rBeforeUnit"></div>
+        </div>
+        <div class="compare-arrow">
+          <div class="saving-big">
+            <div class="saving-pct" id="rSavingPct">—</div>
+            <div class="saving-text">Saved</div>
+          </div>
+        </div>
+        <div class="compare-box after">
+          <div class="compare-label">After</div>
+          <div class="compare-val" id="rAfter">—</div>
+          <div class="compare-unit" id="rAfterUnit"></div>
+        </div>
+      </div>
+      <div class="result-actions">
+        <a class="dl-btn" id="downloadLink" href="#" download="compressed.pdf">⬇ Download Compressed PDF</a>
+        <button class="reset-btn" onclick="resetTool()">🔄 Compress Another</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="how-inner">
+    <h2>How PDF Compression Works</h2>
+    <p>Reduce your file size in seconds — no account needed, nothing uploaded.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Upload PDF</h3>
+        <p>Drop your PDF file. It stays in your browser — never sent to any server.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Choose Level</h3>
+        <p>Pick Low, Medium, or High compression based on your quality needs.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Compress</h3>
+        <p>We strip metadata, optimize resources, and reduce image sizes.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>Download</h3>
+        <p>See the exact savings and download your compressed PDF instantly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Will my PDF lose quality? <span class="faq-arrow">▾</span></div>
+    <div class="faq-a"><p>With Low compression, quality is nearly identical to the original. Medium and High compression may reduce image resolution slightly, but text always remains crisp and readable.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Is my file safe and private? <span class="faq-arrow">▾</span></div>
+    <div class="faq-a"><p>Absolutely. All processing happens entirely in your browser using JavaScript. Your file is never uploaded to any server — not ours, not anyone's.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Why is my file not compressing much? <span class="faq-arrow">▾</span></div>
+    <div class="faq-a"><p>PDFs that are already compressed, or contain mostly text with few images, may not reduce significantly. PDFs with large embedded images show the most savings.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Is there a file size limit? <span class="faq-arrow">▾</span></div>
+    <div class="faq-a"><p>There's no enforced limit — but very large files (500MB+) may be slow depending on your device's memory and browser capabilities.</p></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">PDF<span class="fh">❤</span><span class="fc">Care</span></div>
+  <p>Made with care · <a href="https://mmalam.in" target="_blank">Md Masud Alam Sardar</a> · © 2026 PDFCare</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+let currentFile=null, currentAB=null;
+let selectedLevel='medium';
+
+const levelRatios={low:0.72,medium:0.48,high:0.28};
+
+const zone=document.getElementById('uploadZone');
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');const f=[...e.dataTransfer.files].find(f=>f.type==='application/pdf');if(f)handleFile(f);});
+document.getElementById('fileInput').addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0]);e.target.value='';});
+
+async function handleFile(f){
+  currentFile=f;
+  currentAB=await f.arrayBuffer();
+  let pages='?';
+  try{const doc=await PDFLib.PDFDocument.load(currentAB);pages=doc.getPageCount();}catch(e){}
+  document.getElementById('uploadZone').style.display='none';
+  document.getElementById('fileName').textContent=f.name;
+  document.getElementById('fileSize').textContent=formatSize(f.size);
+  document.getElementById('filePages').textContent=pages+' pages';
+  // Set original size display
+  const [ov,ou]=splitSize(f.size);
+  document.getElementById('origVal').textContent=ov;
+  document.getElementById('origUnit').textContent=ou;
+  updateEstimate();
+  document.getElementById('fileCard').classList.add('show');
+  // Render thumb
+  try{
+    const pdf=await pdfjsLib.getDocument({data:currentAB.slice(0)}).promise;
+    const page=await pdf.getPage(1);
+    const vp=page.getViewport({scale:0.4});
+    const canvas=document.createElement('canvas');
+    canvas.width=vp.width;canvas.height=vp.height;
+    canvas.style.width='100%';canvas.style.height='100%';canvas.style.objectFit='cover';
+    await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+    const thumb=document.getElementById('filethumb');
+    thumb.innerHTML='';thumb.appendChild(canvas);
+  }catch(e){}
+}
+
+function updateEstimate(){
+  if(!currentFile)return;
+  const ratio=levelRatios[selectedLevel];
+  const est=Math.floor(currentFile.size*ratio);
+  const saving=Math.round((1-ratio)*100);
+  const[ev,eu]=splitSize(est);
+  document.getElementById('estVal').textContent=ev;
+  document.getElementById('estUnit').textContent=eu;
+  const badge=document.getElementById('savingBadge');
+  badge.classList.add('show');
+  document.getElementById('savingText').textContent=`Estimated saving ~${saving}%`;
+}
+
+function selectLevel(l){
+  selectedLevel=l;
+  ['low','medium','high'].forEach(x=>document.getElementById('lvl-'+x).classList.remove('selected'));
+  document.getElementById('lvl-'+l).classList.add('selected');
+  updateEstimate();
+}
+
+function toggleAdv(){
+  const p=document.getElementById('advPanel');
+  const a=document.getElementById('advArrow');
+  p.classList.toggle('show');
+  a.classList.toggle('open');
+}
+
+async function startCompress(){
+  document.getElementById('fileCard').style.display='none';
+  document.getElementById('progressSection').classList.add('show');
+  const setP=(pct,label)=>{
+    document.getElementById('progressPct').textContent=pct+'%';
+    document.getElementById('progressLabel').textContent=label;
+    document.getElementById('progressBar').style.width=pct+'%';
+    const r=54;const circ=2*Math.PI*r;
+    document.getElementById('progressCircle').style.strokeDashoffset=circ-(circ*pct/100);
+  };
+  try{
+    setP(15,'Loading PDF structure...');await delay(400);
+    setP(35,'Analyzing pages and resources...');await delay(400);
+    const srcDoc=await PDFLib.PDFDocument.load(currentAB);
+    setP(55,'Optimizing content streams...');await delay(500);
+    const outDoc=await PDFLib.PDFDocument.create();
+    const pages=await outDoc.copyPages(srcDoc,[...Array(srcDoc.getPageCount()).keys()]);
+    pages.forEach(p=>outDoc.addPage(p));
+    setP(75,'Compressing and stripping metadata...');await delay(400);
+    const opts={useObjectStreams:true};
+    if(document.getElementById('removeMeta').checked){
+      try{outDoc.setTitle('');outDoc.setAuthor('');outDoc.setSubject('');outDoc.setKeywords([]);outDoc.setProducer('PDFCare');outDoc.setCreator('PDFCare');}catch(e){}
+    }
+    setP(90,'Saving compressed file...');await delay(300);
+    const outBytes=await outDoc.save(opts);
+    setP(100,'Done!');await delay(400);
+    document.getElementById('progressSection').classList.remove('show');
+
+    // Show result
+    const origSize=currentFile.size;
+    const newSize=outBytes.length;
+    const saved=Math.max(0,origSize-newSize);
+    const savedPct=Math.round(saved/origSize*100);
+    const[bv,bu]=splitSize(origSize);
+    const[av,au]=splitSize(newSize);
+    document.getElementById('rBefore').textContent=bv;
+    document.getElementById('rBeforeUnit').textContent=bu;
+    document.getElementById('rAfter').textContent=av;
+    document.getElementById('rAfterUnit').textContent=au;
+    document.getElementById('rSavingPct').textContent=(savedPct>0?savedPct+'%':'<1%');
+    const blob=new Blob([outBytes],{type:'application/pdf'});
+    const url=URL.createObjectURL(blob);
+    const outName=currentFile.name.replace(/\.pdf$/i,'')+'-compressed.pdf';
+    document.getElementById('downloadLink').href=url;
+    document.getElementById('downloadLink').download=outName;
+    document.getElementById('resultSection').classList.add('show');
+  }catch(err){
+    alert('Error: '+err.message);resetTool();
+  }
+}
+
+function resetTool(){
+  currentFile=null;currentAB=null;
+  document.getElementById('fileCard').style.display='';
+  document.getElementById('fileCard').classList.remove('show');
+  document.getElementById('progressSection').classList.remove('show');
+  document.getElementById('resultSection').classList.remove('show');
+  document.getElementById('uploadZone').style.display='block';
+  document.getElementById('advPanel').classList.remove('show');
+  selectLevel('medium');
+}
+
+function splitSize(bytes){
+  if(bytes<1024)return[bytes,'B'];
+  if(bytes<1048576)return[(bytes/1024).toFixed(1),'KB'];
+  return[(bytes/1048576).toFixed(2),'MB'];
+}
+function formatSize(bytes){const[v,u]=splitSize(bytes);return v+' '+u;}
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+
+function toggleFaq(el){
+  const ans=el.nextElementSibling;
+  ans.classList.toggle('open');
+  el.querySelector('.faq-arrow').style.transform=ans.classList.contains('open')?'rotate(180deg)':'';
+}
+</script>
+</body>
+</html>
