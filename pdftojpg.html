@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF to JPG — PDFCare</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--red:#e8452a;--red-light:#ff6b4a;--bg:#f7f7f8;--text:#1a1a2e;--text-muted:#6b7280;--border:#e5e7eb;--teal:#0d9488;--teal-light:#f0fdfa;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.navbar{background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:0 20px;}
+.nav-inner{max-width:1100px;margin:0 auto;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:3px;text-decoration:none;font-weight:900;font-size:1.5rem;color:var(--text);}
+.nav-logo .heart{font-size:1.25rem;margin:0 2px;display:inline-block;animation:hb 1.4s ease-in-out infinite;filter:drop-shadow(0 0 6px rgba(232,69,42,0.5));}
+.nav-logo .care{background:linear-gradient(135deg,var(--red),var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+@keyframes hb{0%,100%{transform:scale(1);}14%{transform:scale(1.25);}28%{transform:scale(1);}42%{transform:scale(1.18);}56%{transform:scale(1);}}
+.nav-back{text-decoration:none;font-size:0.88rem;font-weight:600;color:var(--text-muted);padding:6px 14px;border:1.5px solid var(--border);border-radius:100px;transition:all 0.2s;}
+.nav-back:hover{border-color:var(--red);color:var(--red);}
+.tool-hero{background:white;border-bottom:1px solid var(--border);padding:48px 20px 40px;text-align:center;position:relative;overflow:hidden;}
+.tool-hero::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(13,148,136,0.07) 0%,transparent 70%);pointer-events:none;}
+.hero-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--teal),#2dd4bf);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px;box-shadow:0 8px 24px rgba(13,148,136,0.3);}
+.tool-hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:10px;letter-spacing:-0.02em;}
+.tool-hero p{font-size:1rem;color:var(--text-muted);max-width:480px;margin:0 auto 24px;line-height:1.7;}
+.feature-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.fpill{padding:5px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:100px;font-size:0.78rem;font-weight:600;color:var(--text-muted);}
+.fpill span{color:var(--teal);margin-right:4px;}
+.tool-main{max-width:900px;margin:0 auto;padding:40px 20px;}
+.upload-zone{background:white;border:2.5px dashed var(--border);border-radius:20px;padding:64px 24px;text-align:center;cursor:pointer;transition:all 0.25s;}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--teal);box-shadow:0 8px 32px rgba(13,148,136,0.12);}
+.upload-icon{font-size:4rem;margin-bottom:16px;display:block;}
+.upload-zone h3{font-size:1.2rem;font-weight:800;margin-bottom:8px;}
+.upload-zone p{font-size:0.9rem;color:var(--text-muted);margin-bottom:24px;}
+.upload-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 32px;background:linear-gradient(135deg,var(--teal),#2dd4bf);color:white;border:none;border-radius:100px;font-size:0.92rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(13,148,136,0.3);transition:all 0.2s;}
+.upload-btn:hover{transform:translateY(-2px);}
+.workspace{display:none;}
+.workspace.show{display:block;animation:fadeUp 0.4s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+.file-bar{background:white;border:1.5px solid var(--border);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.file-info{flex:1;}
+.file-name{font-size:0.9rem;font-weight:800;}
+.file-meta{font-size:0.75rem;color:var(--text-muted);}
+.change-btn{padding:6px 14px;font-size:0.8rem;font-weight:700;border:1.5px solid var(--border);border-radius:100px;background:white;cursor:pointer;transition:all 0.2s;}
+.change-btn:hover{border-color:var(--red);color:var(--red);}
+.options-panel{background:white;border:1.5px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px;}
+.opt-title{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.opt-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.opts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:16px;}
+.opt-item{display:flex;flex-direction:column;gap:6px;}
+.opt-label{font-size:0.82rem;font-weight:700;}
+.opt-sub{font-size:0.72rem;color:var(--text-muted);}
+.opt-select{padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:0.85rem;font-weight:600;background:white;outline:none;transition:border-color 0.2s;cursor:pointer;}
+.opt-select:focus{border-color:var(--teal);}
+.quality-wrap{display:flex;align-items:center;gap:12px;}
+.quality-slider{flex:1;accent-color:var(--teal);}
+.quality-val{font-size:0.9rem;font-weight:800;color:var(--teal);min-width:36px;text-align:right;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;}
+.t-info .t-name{font-size:0.88rem;font-weight:700;}
+.t-info .t-desc{font-size:0.75rem;color:var(--text-muted);margin-top:2px;}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.tslider{position:absolute;inset:0;background:#e5e7eb;border-radius:100px;cursor:pointer;transition:0.3s;}
+.tslider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+.toggle input:checked+.tslider{background:var(--teal);}
+.toggle input:checked+.tslider::before{transform:translateX(20px);}
+.convert-section{text-align:center;}
+.convert-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 52px;background:linear-gradient(135deg,var(--teal),#2dd4bf);color:white;border:none;border-radius:100px;font-size:1.1rem;font-weight:800;cursor:pointer;box-shadow:0 6px 24px rgba(13,148,136,0.35);transition:all 0.25s;}
+.convert-btn:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(13,148,136,0.45);}
+.convert-hint{margin-top:10px;font-size:0.78rem;color:var(--text-muted);}
+.progress-section{display:none;background:white;border:1.5px solid var(--border);border-radius:20px;padding:48px 24px;text-align:center;}
+.progress-section.show{display:block;animation:fadeUp 0.4s ease both;}
+.spin{font-size:3rem;animation:spin 1s linear infinite;display:inline-block;margin-bottom:16px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.prog-bar-wrap{background:var(--bg);border-radius:100px;height:8px;margin:16px auto 0;max-width:300px;overflow:hidden;}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--teal),#2dd4bf);border-radius:100px;width:0%;transition:width 0.4s ease;}
+.prog-label{font-size:1rem;font-weight:700;margin-bottom:6px;}
+.prog-sub{font-size:0.85rem;color:var(--text-muted);}
+.result-section{display:none;background:white;border:1.5px solid var(--border);border-radius:20px;overflow:hidden;}
+.result-section.show{display:block;animation:fadeUp 0.5s ease both;}
+.result-top{background:linear-gradient(135deg,var(--teal-light),#ccfbf1);padding:28px 24px;text-align:center;border-bottom:1px solid rgba(13,148,136,0.15);}
+.result-icon{font-size:3rem;margin-bottom:10px;}
+.result-title{font-size:1.5rem;font-weight:900;margin-bottom:4px;}
+.result-sub{font-size:0.9rem;color:var(--text-muted);}
+.result-body{padding:24px;}
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:24px;max-height:360px;overflow-y:auto;}
+.prev-card{border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:white;}
+.prev-img{width:100%;aspect-ratio:0.707;object-fit:cover;display:block;}
+.prev-label{padding:5px 8px;font-size:0.7rem;font-weight:700;color:var(--text-muted);border-top:1px solid var(--border);}
+.result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.dl-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:linear-gradient(135deg,var(--teal),#2dd4bf);color:white;border:none;border-radius:100px;font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(13,148,136,0.3);text-decoration:none;transition:all 0.2s;}
+.dl-btn:hover{transform:translateY(-2px);}
+.reset-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:white;color:var(--text);border:1.5px solid var(--border);border-radius:100px;font-size:0.92rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.reset-btn:hover{border-color:var(--red);color:var(--red);}
+footer{background:white;border-top:1px solid var(--border);padding:24px 20px;text-align:center;}
+.footer-logo{font-weight:900;font-size:1.3rem;display:inline-flex;align-items:center;gap:3px;margin-bottom:6px;}
+.fh{color:var(--red);display:inline-block;animation:hb 1.4s ease-in-out infinite;}
+.fc{background:linear-gradient(135deg,var(--red),var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+footer p{font-size:0.78rem;color:var(--text-muted);}
+footer a{color:var(--red);text-decoration:none;font-weight:600;}
+@media(max-width:600px){.opts-grid{grid-template-columns:1fr;}.preview-grid{grid-template-columns:repeat(auto-fill,minmax(90px,1fr));}}
+</style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a href="index.html" class="nav-logo"><span>PDF</span><span class="heart">❤</span><span class="care">Care</span></a>
+  <a href="index.html" class="nav-back">← All Tools</a>
+</div></nav>
+<div class="tool-hero">
+  <div class="hero-icon">🖼️</div>
+  <h1>PDF to JPG</h1>
+  <p>Convert every page of your PDF to high-quality JPG images. Control resolution, quality, and format — preview all pages before downloading.</p>
+  <div class="feature-pills">
+    <div class="fpill"><span>✓</span>Live Page Preview</div>
+    <div class="fpill"><span>✓</span>Quality Control</div>
+    <div class="fpill"><span>✓</span>JPG or PNG Output</div>
+    <div class="fpill"><span>✓</span>Download as ZIP</div>
+    <div class="fpill"><span>✓</span>100% Private</div>
+    <div class="fpill"><span>✓</span>Free Forever</div>
+  </div>
+</div>
+<div class="tool-main">
+  <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fi').click()">
+    <span class="upload-icon">📄</span>
+    <h3>Drop your PDF here</h3>
+    <p>Drag & drop your PDF or click to select.<br>Each page will be converted to an image.</p>
+    <button class="upload-btn" onclick="event.stopPropagation();document.getElementById('fi').click()">📄 Choose PDF File</button>
+    <div style="margin-top:14px;font-size:0.75rem;color:var(--text-muted);">PDF only · Processed in your browser</div>
+  </div>
+  <input type="file" id="fi" accept=".pdf">
+  <div class="workspace" id="workspace">
+    <div class="file-bar">
+      <div class="file-info"><div class="file-name" id="fileName">—</div><div class="file-meta" id="fileMeta">—</div></div>
+      <button class="change-btn" onclick="resetTool()">✕ Change</button>
+    </div>
+    <div class="options-panel">
+      <div class="opt-title">⚙️ Conversion Settings</div>
+      <div class="opts-grid">
+        <div class="opt-item">
+          <div class="opt-label">Output Format</div>
+          <div class="opt-sub">Image file type</div>
+          <select class="opt-select" id="format">
+            <option value="jpg" selected>JPG (smaller size)</option>
+            <option value="png">PNG (higher quality)</option>
+          </select>
+        </div>
+        <div class="opt-item">
+          <div class="opt-label">Resolution (DPI)</div>
+          <div class="opt-sub">Higher = sharper images</div>
+          <select class="opt-select" id="dpi">
+            <option value="1">72 DPI (Screen)</option>
+            <option value="1.5">108 DPI (Good)</option>
+            <option value="2" selected>150 DPI (High Quality)</option>
+            <option value="3">216 DPI (Print Ready)</option>
+          </select>
+        </div>
+        <div class="opt-item">
+          <div class="opt-label">Pages to Convert</div>
+          <div class="opt-sub">All or specific range</div>
+          <select class="opt-select" id="pageRange">
+            <option value="all" selected>All Pages</option>
+            <option value="first">First Page Only</option>
+            <option value="custom">Custom Range</option>
+          </select>
+        </div>
+        <div class="opt-item">
+          <div class="opt-label">Quality</div>
+          <div class="opt-sub">JPG compression quality</div>
+          <div class="quality-wrap">
+            <input type="range" class="quality-slider" id="quality" min="50" max="100" value="90" oninput="document.getElementById('qval').textContent=this.value+'%'">
+            <span class="quality-val" id="qval">90%</span>
+          </div>
+        </div>
+      </div>
+      <div class="toggle-row">
+        <div class="t-info"><div class="t-name">White Background</div><div class="t-desc">Add white background to transparent pages</div></div>
+        <label class="toggle"><input type="checkbox" id="whiteBg" checked><span class="tslider"></span></label>
+      </div>
+    </div>
+    <div class="convert-section">
+      <button class="convert-btn" onclick="startConvert()">🖼️ Convert to Images</button>
+      <div class="convert-hint">All processing happens in your browser — completely private</div>
+    </div>
+  </div>
+  <div class="progress-section" id="progressSection">
+    <div class="spin">🖼️</div>
+    <div class="prog-label" id="progLabel">Converting pages...</div>
+    <div class="prog-sub" id="progSub">Please wait...</div>
+    <div class="prog-bar-wrap"><div class="prog-bar" id="progBar"></div></div>
+  </div>
+  <div class="result-section" id="resultSection">
+    <div class="result-top"><div class="result-icon">✅</div><div class="result-title">Conversion Complete!</div><div class="result-sub" id="resultSub">Your PDF pages have been converted.</div></div>
+    <div class="result-body">
+      <div class="preview-grid" id="previewGrid"></div>
+      <div class="result-actions">
+        <button class="dl-btn" onclick="downloadAll()">⬇ Download All (ZIP)</button>
+        <button class="reset-btn" onclick="resetTool()">🔄 Convert Another</button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer><div class="footer-logo">PDF<span class="fh">❤</span><span class="fc">Care</span></div><p>Made with care · <a href="https://mmalam.in" target="_blank">Md Masud Alam Sardar</a> · © 2026 PDFCare</p></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+let currentFile=null,currentAB=null,resultImages=[];
+const zone=document.getElementById('uploadZone');
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');const f=[...e.dataTransfer.files].find(f=>f.type==='application/pdf');if(f)handleFile(f);});
+document.getElementById('fi').addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0]);e.target.value='';});
+async function handleFile(f){
+  currentFile=f;currentAB=await f.arrayBuffer();
+  let pages='?';
+  try{const pdf=await pdfjsLib.getDocument({data:currentAB.slice(0)}).promise;pages=pdf.numPages;}catch(e){}
+  document.getElementById('uploadZone').style.display='none';
+  document.getElementById('fileName').textContent=f.name;
+  document.getElementById('fileMeta').textContent=pages+' pages · '+formatSize(f.size);
+  document.getElementById('workspace').classList.add('show');
+}
+async function startConvert(){
+  document.getElementById('workspace').style.display='none';
+  document.getElementById('progressSection').classList.add('show');
+  resultImages=[];
+  try{
+    const pdf=await pdfjsLib.getDocument({data:currentAB.slice(0)}).promise;
+    const total=pdf.numPages;
+    const scale=parseFloat(document.getElementById('dpi').value)||2;
+    const fmt=document.getElementById('format').value;
+    const quality=parseInt(document.getElementById('quality').value)/100;
+    const whiteBg=document.getElementById('whiteBg').checked;
+    for(let i=1;i<=total;i++){
+      document.getElementById('progLabel').textContent=`Converting page ${i} of ${total}...`;
+      document.getElementById('progSub').textContent='Rendering at high resolution...';
+      document.getElementById('progBar').style.width=Math.round((i/total)*100)+'%';
+      const page=await pdf.getPage(i);
+      const vp=page.getViewport({scale});
+      const canvas=document.createElement('canvas');
+      canvas.width=vp.width;canvas.height=vp.height;
+      const ctx=canvas.getContext('2d');
+      if(whiteBg){ctx.fillStyle='white';ctx.fillRect(0,0,canvas.width,canvas.height);}
+      await page.render({canvasContext:ctx,viewport:vp}).promise;
+      const mimeType=fmt==='png'?'image/png':'image/jpeg';
+      const dataUrl=canvas.toDataURL(mimeType,quality);
+      resultImages.push({dataUrl,name:`page-${i}.${fmt}`,page:i});
+      await new Promise(r=>setTimeout(r,10));
+    }
+    document.getElementById('progressSection').classList.remove('show');
+    document.getElementById('resultSub').textContent=`${total} page${total!==1?'s':''} converted to ${fmt.toUpperCase()}.`;
+    const grid=document.getElementById('previewGrid');grid.innerHTML='';
+    resultImages.forEach(img=>{
+      const card=document.createElement('div');card.className='prev-card';
+      card.innerHTML=`<img class="prev-img" src="${img.dataUrl}"><div class="prev-label">${img.name}</div>`;
+      grid.appendChild(card);
+    });
+    document.getElementById('resultSection').classList.add('show');
+  }catch(err){alert('Error: '+err.message);resetTool();}
+}
+async function downloadAll(){
+  if(!resultImages.length)return;
+  if(resultImages.length===1){const a=document.createElement('a');a.href=resultImages[0].dataUrl;a.download=resultImages[0].name;a.click();return;}
+  const zip=new JSZip();
+  resultImages.forEach(img=>{const b64=img.dataUrl.split(',')[1];zip.file(img.name,b64,{base64:true});});
+  const blob=await zip.generateAsync({type:'blob'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=currentFile.name.replace(/\.pdf$/i,'')+'-images.zip';a.click();
+}
+function resetTool(){currentFile=null;currentAB=null;resultImages=[];document.getElementById('uploadZone').style.display='block';document.getElementById('workspace').style.display='';document.getElementById('workspace').classList.remove('show');document.getElementById('progressSection').classList.remove('show');document.getElementById('resultSection').classList.remove('show');}
+function formatSize(b){if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'KB';return(b/1048576).toFixed(2)+'MB';}
+</script>
+</body>
+</html>

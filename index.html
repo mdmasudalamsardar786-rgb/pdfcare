@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDFCare — Every PDF Tool in One Place</title>
+<meta name="description" content="PDFCare gives you every tool you need to work with PDFs — merge, split, compress, convert, edit and more. 100% free and easy to use.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #e8452a;
+  --red-dark: #c23118;
+  --red-light: #ff6b4a;
+  --bg: #f7f7f8;
+  --white: #ffffff;
+  --text: #1a1a2e;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-hover: 0 8px 32px rgba(232,69,42,0.18);
+  --radius: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
+
+/* ─── NAVBAR ─── */
+.navbar {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+  padding: 0 20px;
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 3px;
+  text-decoration: none; font-weight: 900; font-size: 1.5rem;
+  color: var(--text); letter-spacing: -0.02em;
+}
+.nav-logo .heart {
+  font-size: 1.25rem; margin: 0 2px;
+  display: inline-block;
+  animation: heartbeat 1.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(232,69,42,0.5));
+}
+@keyframes heartbeat {
+  0%,100% { transform: scale(1); }
+  14% { transform: scale(1.25); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.18); }
+  56% { transform: scale(1); }
+}
+.nav-logo .pdf-part { color: var(--text); }
+.nav-logo .care-part {
+  background: linear-gradient(135deg, var(--red), var(--red-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hamburger {
+  background: none; border: none; cursor: pointer;
+  display: flex; flex-direction: column; gap: 5px; padding: 4px;
+}
+.hamburger span { width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: 0.3s; }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+
+/* ─── HERO ─── */
+.hero {
+  background: white;
+  padding: 56px 20px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+.hero-watermark {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18rem;
+  font-weight: 900;
+  color: rgba(232,69,42,0.04);
+  pointer-events: none;
+  letter-spacing: -0.06em;
+  font-family: 'DM Serif Display', serif;
+  white-space: nowrap;
+}
+.hero-inner { position: relative; z-index: 2; max-width: 680px; margin: 0 auto; }
+.hero h1 {
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.18;
+  margin-bottom: 16px;
+  color: var(--text);
+  animation: fadeUp 0.6s ease both;
+}
+.hero p {
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  max-width: 520px;
+  margin: 0 auto 32px;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(18px); }
+  to { opacity:1; transform: none; }
+}
+
+/* ─── FILTER PILLS ─── */
+.filter-wrap {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+.pill {
+  padding: 8px 20px;
+  border: 2px solid var(--border);
+  border-radius: 100px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: white;
+  color: var(--text);
+  transition: all 0.2s;
+  user-select: none;
+}
+.pill:hover { border-color: var(--red); color: var(--red); }
+.pill.active { background: var(--text); color: white; border-color: var(--text); }
+
+/* ─── TOOLS GRID ─── */
+.tools-section { padding: 48px 20px; max-width: 1100px; margin: 0 auto; }
+.section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  padding-left: 4px;
+}
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+  margin-bottom: 40px;
+}
+.tool-card {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.22s;
+  animation: fadeUp 0.5s ease both;
+}
+.tool-card:hover {
+  border-color: var(--red);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+.tool-icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.icon-red { background: #fdecea; }
+.icon-green { background: #e8f5e9; }
+.icon-blue { background: #e3f2fd; }
+.icon-yellow { background: #fffde7; }
+.icon-purple { background: #f3e5f5; }
+.icon-teal { background: #e0f2f1; }
+.icon-orange { background: #fff3e0; }
+
+.tool-text h3 { font-size: 1rem; font-weight: 800; margin-bottom: 4px; }
+.tool-text p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; font-weight: 500; }
+
+/* ─── FEATURES STRIP ─── */
+.features-strip {
+  background: white;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 56px 20px;
+  text-align: center;
+}
+.features-strip h2 {
+  font-size: 1.8rem; font-weight: 800; color: var(--text);
+  margin-bottom: 8px;
+}
+.features-strip > p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 40px; font-weight: 500; }
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+@media(max-width: 768px) {
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media(max-width: 480px) {
+  .features-grid { grid-template-columns: 1fr 1fr; }
+}
+.feature-card {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 16px;
+  color: var(--text);
+  transition: all 0.22s;
+}
+.feature-card:hover {
+  border-color: var(--red);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+.feature-card .feat-icon { font-size: 2rem; margin-bottom: 12px; }
+.feature-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 6px; color: var(--text); }
+.feature-card p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; font-weight: 500; }
+
+/* ─── MOBILE SIDEBAR ─── */
+.sidebar-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 200;
+}
+.sidebar {
+  position: fixed;
+  top: 0; left: -100%;
+  width: 280px; height: 100%;
+  background: white;
+  z-index: 300;
+  overflow-y: auto;
+  transition: left 0.3s ease;
+  padding: 20px 0;
+}
+.sidebar.open { left: 0; }
+.sidebar-overlay.open { display: block; }
+.sidebar-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.sidebar-logo { font-weight: 800; font-size: 1.2rem; }
+.sidebar-logo .heart { color: var(--red); }
+.sidebar-close {
+  background: none; border: none; cursor: pointer;
+  font-size: 1.4rem; color: var(--text-muted);
+}
+.sidebar-group { padding: 8px 20px; }
+.sidebar-group-title {
+  font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 6px; margin-top: 12px;
+}
+.sidebar-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 0; font-size: 0.88rem; font-weight: 600;
+  cursor: pointer; color: var(--text); text-decoration: none;
+  transition: color 0.2s;
+}
+.sidebar-item:hover { color: var(--red); }
+.sidebar-item-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  background: white;
+  border-top: 1px solid var(--border);
+  padding: 40px 20px 28px;
+  text-align: center;
+}
+.footer-inner { max-width: 700px; margin: 0 auto; }
+.footer-logo {
+  font-weight: 900; font-size: 1.4rem; letter-spacing: -0.02em;
+  margin-bottom: 6px; display: inline-flex; align-items: center; gap: 3px;
+}
+.footer-logo .f-pdf { color: var(--text); }
+.footer-logo .f-heart {
+  color: var(--red); font-size: 1.2rem;
+  display: inline-block;
+  animation: heartbeat 1.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 5px rgba(232,69,42,0.45));
+}
+.footer-logo .f-care {
+  background: linear-gradient(135deg, var(--red), var(--red-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+footer .footer-tagline { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; font-weight: 500; }
+.footer-credit {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+.footer-credit a { color: var(--red); text-decoration: none; font-weight: 600; }
+.footer-credit a:hover { text-decoration: underline; }
+
+/* ─── HIDDEN CATEGORIES ─── */
+.tool-card[data-cat] { display: flex; }
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:600px) {
+  .tools-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">PDF<span class="heart">❤</span>Care</div>
+    <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-group-title">Organize PDF</div>
+    <a class="sidebar-item" onclick="filterTools('organize');toggleSidebar()">
+      <div class="sidebar-item-icon icon-red">🔀</div> Merge PDF
+    </a>
+    <a class="sidebar-item" onclick="filterTools('organize');toggleSidebar()">
+      <div class="sidebar-item-icon icon-red">✂️</div> Split PDF
+    </a>
+    <a class="sidebar-item" onclick="filterTools('organize');toggleSidebar()">
+      <div class="sidebar-item-icon icon-red">🗑️</div> Remove Pages
+    </a>
+    <a class="sidebar-item" onclick="filterTools('organize');toggleSidebar()">
+      <div class="sidebar-item-icon icon-red">📤</div> Extract Pages
+    </a>
+    <a class="sidebar-item" onclick="filterTools('organize');toggleSidebar()">
+      <div class="sidebar-item-icon icon-red">🔄</div> Rotate PDF
+    </a>
+    <a class="sidebar-item" onclick="filterTools('organize');toggleSidebar()">
+      <div class="sidebar-item-icon icon-red">📷</div> Scan to PDF
+    </a>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-group-title">Optimize PDF</div>
+    <a class="sidebar-item" onclick="filterTools('optimize');toggleSidebar()">
+      <div class="sidebar-item-icon icon-green">🗜️</div> Compress PDF
+    </a>
+    <a class="sidebar-item" onclick="filterTools('optimize');toggleSidebar()">
+      <div class="sidebar-item-icon icon-green">🔧</div> Repair PDF
+    </a>
+    <a class="sidebar-item" onclick="filterTools('optimize');toggleSidebar()">
+      <div class="sidebar-item-icon icon-green">🔍</div> OCR PDF
+    </a>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-group-title">Convert to PDF</div>
+    <a class="sidebar-item" onclick="filterTools('to-pdf');toggleSidebar()">
+      <div class="sidebar-item-icon icon-yellow">🖼️</div> JPG to PDF
+    </a>
+    <a class="sidebar-item" onclick="filterTools('to-pdf');toggleSidebar()">
+      <div class="sidebar-item-icon icon-blue">📝</div> Word to PDF
+    </a>
+    <a class="sidebar-item" onclick="filterTools('to-pdf');toggleSidebar()">
+      <div class="sidebar-item-icon icon-orange">📊</div> PowerPoint to PDF
+    </a>
+    <a class="sidebar-item" onclick="filterTools('to-pdf');toggleSidebar()">
+      <div class="sidebar-item-icon icon-green">📈</div> Excel to PDF
+    </a>
+    <a class="sidebar-item" onclick="filterTools('to-pdf');toggleSidebar()">
+      <div class="sidebar-item-icon icon-yellow">🌐</div> HTML to PDF
+    </a>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-group-title">Convert from PDF</div>
+    <a class="sidebar-item" onclick="filterTools('from-pdf');toggleSidebar()">
+      <div class="sidebar-item-icon icon-yellow">🖼️</div> PDF to JPG
+    </a>
+    <a class="sidebar-item" onclick="filterTools('from-pdf');toggleSidebar()">
+      <div class="sidebar-item-icon icon-blue">📝</div> PDF to Word
+    </a>
+    <a class="sidebar-item" onclick="filterTools('from-pdf');toggleSidebar()">
+      <div class="sidebar-item-icon icon-orange">📊</div> PDF to PowerPoint
+    </a>
+    <a class="sidebar-item" onclick="filterTools('from-pdf');toggleSidebar()">
+      <div class="sidebar-item-icon icon-green">📈</div> PDF to Excel
+    </a>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-group-title">Edit PDF</div>
+    <a class="sidebar-item" onclick="filterTools('edit');toggleSidebar()">
+      <div class="sidebar-item-icon icon-purple">✏️</div> Edit PDF
+    </a>
+    <a class="sidebar-item" onclick="filterTools('edit');toggleSidebar()">
+      <div class="sidebar-item-icon icon-purple">✍️</div> Sign PDF
+    </a>
+    <a class="sidebar-item" onclick="filterTools('edit');toggleSidebar()">
+      <div class="sidebar-item-icon icon-teal">🔒</div> Protect PDF
+    </a>
+    <a class="sidebar-item" onclick="filterTools('edit');toggleSidebar()">
+      <div class="sidebar-item-icon icon-teal">🔓</div> Unlock PDF
+    </a>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <a href="#" class="nav-logo"><span class="pdf-part">PDF</span><span class="heart">❤</span><span class="care-part">Care</span></a>
+    </div>
+    <div class="nav-right"></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-watermark">PDF</div>
+  <div class="hero-inner">
+    <h1>Every tool you need to<br>work with PDFs in one place</h1>
+    <p>Simple, fast, and completely free — merge, split, compress, convert, rotate, sign, and protect PDFs with just a few clicks. No installation needed.</p>
+    <div class="filter-wrap">
+      <div class="pill active" onclick="filterTools('all')">All</div>
+      <div class="pill" onclick="filterTools('organize')">Organize PDF</div>
+      <div class="pill" onclick="filterTools('optimize')">Optimize PDF</div>
+      <div class="pill" onclick="filterTools('to-pdf')">Convert to PDF</div>
+      <div class="pill" onclick="filterTools('from-pdf')">Convert from PDF</div>
+      <div class="pill" onclick="filterTools('edit')">Edit PDF</div>
+      <div class="pill" onclick="filterTools('security')">PDF Security</div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<main class="tools-section">
+
+  <!-- ORGANIZE -->
+  <div class="section-label" id="lbl-organize">Organize PDF</div>
+  <div class="tools-grid" id="grid-organize">
+    <a class="tool-card" data-cat="organize" href="merge.html">
+      <div class="tool-icon icon-red">🔀</div>
+      <div class="tool-text">
+        <h3>Merge PDF</h3>
+        <p>Combine multiple PDF files into one in the order you choose — fast and easy.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="organize" href="split.html">
+      <div class="tool-icon icon-red">✂️</div>
+      <div class="tool-text">
+        <h3>Split PDF</h3>
+        <p>Separate one page or a full set into independent PDF files without hassle.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="organize" href="removepages.html">
+      <div class="tool-icon icon-red">🗑️</div>
+      <div class="tool-text">
+        <h3>Remove Pages</h3>
+        <p>Delete unwanted pages from your PDF with a single click.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="organize" href="extractpages.html">
+      <div class="tool-icon icon-red">📤</div>
+      <div class="tool-text">
+        <h3>Extract Pages</h3>
+        <p>Pick specific pages from a PDF and save them as a brand new document.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="organize" href="rotate.html">
+      <div class="tool-icon icon-red">🔄</div>
+      <div class="tool-text">
+        <h3>Rotate PDF</h3>
+        <p>Fix the orientation of any page — rotate left, right, or 180° instantly.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="organize" href="https://www.ilovepdf.com/jpg-to-pdf" target="_blank" rel="noopener">
+      <div class="tool-icon icon-red">📷</div>
+      <div class="tool-text">
+        <h3>Scan to PDF</h3>
+        <p>Turn your device camera into a scanner and save documents as PDF.</p>
+      </div>
+    </a>
+  </div>
+
+  <!-- OPTIMIZE -->
+  <div class="section-label" id="lbl-optimize">Optimize PDF</div>
+  <div class="tools-grid" id="grid-optimize">
+    <a class="tool-card" data-cat="optimize" href="compress.html">
+      <div class="tool-icon icon-green">🗜️</div>
+      <div class="tool-text">
+        <h3>Compress PDF</h3>
+        <p>Reduce PDF file size while keeping the best possible quality.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="optimize" href="https://www.ilovepdf.com/repair-pdf" target="_blank" rel="noopener">
+      <div class="tool-icon icon-green">🔧</div>
+      <div class="tool-text">
+        <h3>Repair PDF</h3>
+        <p>Recover damaged or corrupted PDF files and restore their content.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="optimize" href="https://www.ilovepdf.com/pdf-ocr" target="_blank" rel="noopener">
+      <div class="tool-icon icon-green">🔍</div>
+      <div class="tool-text">
+        <h3>OCR PDF</h3>
+        <p>Make scanned PDFs searchable and selectable using optical character recognition.</p>
+      </div>
+    </a>
+  </div>
+
+  <!-- CONVERT TO PDF -->
+  <div class="section-label" id="lbl-to-pdf">Convert to PDF</div>
+  <div class="tools-grid" id="grid-to-pdf">
+    <a class="tool-card" data-cat="to-pdf" href="jpgtopdf.html">
+      <div class="tool-icon icon-yellow">🖼️</div>
+      <div class="tool-text">
+        <h3>JPG to PDF</h3>
+        <p>Convert JPG, PNG, BMP or any image into a high-quality PDF document.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="to-pdf" href="https://www.ilovepdf.com/word-to-pdf" target="_blank" rel="noopener">
+      <div class="tool-icon icon-blue">📝</div>
+      <div class="tool-text">
+        <h3>Word to PDF</h3>
+        <p>Convert DOCX files to PDF while preserving fonts, images, and formatting.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="to-pdf" href="https://www.ilovepdf.com/powerpoint-to-pdf" target="_blank" rel="noopener">
+      <div class="tool-icon icon-orange">📊</div>
+      <div class="tool-text">
+        <h3>PowerPoint to PDF</h3>
+        <p>Turn PPT and PPTX presentations into PDF in seconds.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="to-pdf" href="https://www.ilovepdf.com/excel-to-pdf" target="_blank" rel="noopener">
+      <div class="tool-icon icon-green">📈</div>
+      <div class="tool-text">
+        <h3>Excel to PDF</h3>
+        <p>Convert XLS and XLSX spreadsheets to PDF with perfect layout.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="to-pdf" href="https://www.ilovepdf.com/html-to-pdf" target="_blank" rel="noopener">
+      <div class="tool-icon icon-yellow">🌐</div>
+      <div class="tool-text">
+        <h3>HTML to PDF</h3>
+        <p>Convert any web page or HTML file into a clean, shareable PDF.</p>
+      </div>
+    </a>
+  </div>
+
+  <!-- CONVERT FROM PDF -->
+  <div class="section-label" id="lbl-from-pdf">Convert from PDF</div>
+  <div class="tools-grid" id="grid-from-pdf">
+    <a class="tool-card" data-cat="from-pdf" href="pdftojpg.html">
+      <div class="tool-icon icon-yellow">🖼️</div>
+      <div class="tool-text">
+        <h3>PDF to JPG</h3>
+        <p>Extract every page of your PDF as a high-quality JPG image.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="from-pdf" href="https://www.ilovepdf.com/pdf-to-word" target="_blank" rel="noopener">
+      <div class="tool-icon icon-blue">📝</div>
+      <div class="tool-text">
+        <h3>PDF to Word</h3>
+        <p>Convert PDF to fully editable Word documents with accurate formatting.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="from-pdf" href="https://www.ilovepdf.com/pdf-to-powerpoint" target="_blank" rel="noopener">
+      <div class="tool-icon icon-orange">📊</div>
+      <div class="tool-text">
+        <h3>PDF to PowerPoint</h3>
+        <p>Turn your PDF slides into editable PowerPoint presentations.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="from-pdf" href="https://www.ilovepdf.com/pdf-to-excel" target="_blank" rel="noopener">
+      <div class="tool-icon icon-green">📈</div>
+      <div class="tool-text">
+        <h3>PDF to Excel</h3>
+        <p>Extract tables and data from PDF into editable Excel spreadsheets.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="from-pdf" href="https://www.ilovepdf.com/pdf-to-text" target="_blank" rel="noopener">
+      <div class="tool-icon icon-purple">📄</div>
+      <div class="tool-text">
+        <h3>PDF to Text</h3>
+        <p>Extract plain text from any PDF file quickly and accurately.</p>
+      </div>
+    </a>
+  </div>
+
+  <!-- EDIT -->
+  <div class="section-label" id="lbl-edit">Edit PDF</div>
+  <div class="tools-grid" id="grid-edit">
+    <a class="tool-card" data-cat="edit" href="https://www.ilovepdf.com/edit-pdf" target="_blank" rel="noopener">
+      <div class="tool-icon icon-purple">✏️</div>
+      <div class="tool-text">
+        <h3>Edit PDF</h3>
+        <p>Add text, images, shapes, and annotations to any PDF document.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="edit" href="https://www.ilovepdf.com/sign-pdf" target="_blank" rel="noopener">
+      <div class="tool-icon icon-purple">✍️</div>
+      <div class="tool-text">
+        <h3>Sign PDF</h3>
+        <p>Add your digital signature to PDF documents securely and instantly.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="edit" href="https://www.ilovepdf.com/pdf-forms" target="_blank" rel="noopener">
+      <div class="tool-icon icon-purple">🖊️</div>
+      <div class="tool-text">
+        <h3>Fill PDF Form</h3>
+        <p>Fill out interactive PDF forms online without any software.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="edit" href="watermark.html">
+      <div class="tool-icon icon-red">💧</div>
+      <div class="tool-text">
+        <h3>Watermark PDF</h3>
+        <p>Stamp text or image watermarks on your PDF pages easily.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="edit" href="pagenumbers.html">
+      <div class="tool-icon icon-blue">🔢</div>
+      <div class="tool-text">
+        <h3>Add Page Numbers</h3>
+        <p>Insert page numbers to your PDF with custom position and format.</p>
+      </div>
+    </a>
+  </div>
+
+  <!-- SECURITY -->
+  <div class="section-label" id="lbl-security">PDF Security</div>
+  <div class="tools-grid" id="grid-security">
+    <a class="tool-card" data-cat="security" href="protect.html">
+      <div class="tool-icon icon-teal">🔒</div>
+      <div class="tool-text">
+        <h3>Protect PDF</h3>
+        <p>Add password protection to your PDF to restrict access and editing.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="security" href="unlock.html">
+      <div class="tool-icon icon-teal">🔓</div>
+      <div class="tool-text">
+        <h3>Unlock PDF</h3>
+        <p>Remove PDF password restrictions to freely access your document.</p>
+      </div>
+    </a>
+    <a class="tool-card" data-cat="security" href="https://www.ilovepdf.com/redact-pdf" target="_blank" rel="noopener">
+      <div class="tool-icon icon-teal">🛡️</div>
+      <div class="tool-text">
+        <h3>Redact PDF</h3>
+        <p>Permanently hide sensitive information from your PDF files.</p>
+      </div>
+    </a>
+  </div>
+
+</main>
+
+<!-- FEATURES STRIP -->
+<section class="features-strip">
+  <h2>Why choose PDFCare?</h2>
+  <p>We built PDFCare to make PDF work simple, fast, and accessible for everyone.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feat-icon">⚡</div>
+      <h3>Lightning Fast</h3>
+      <p>All processing happens in seconds — no waiting around.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon">🔒</div>
+      <h3>100% Secure</h3>
+      <p>Your files are encrypted and deleted after processing.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon">💸</div>
+      <h3>Always Free</h3>
+      <p>Every tool is completely free — no hidden fees, ever.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon">📱</div>
+      <h3>Works Everywhere</h3>
+      <p>Use PDFCare on any device — desktop, tablet, or mobile.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon">☁️</div>
+      <h3>No Install Needed</h3>
+      <p>Everything runs in your browser — nothing to download.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <span class="f-pdf">PDF</span><span class="f-heart">❤</span><span class="f-care">Care</span>
+    </div>
+    <p class="footer-tagline">Every PDF tool you need, in one place. Free forever.</p>
+    <div class="footer-credit">
+      Made with care &nbsp;·&nbsp;
+      Developed by <a href="https://mmalam.in" target="_blank">Md Masud Alam Sardar</a>
+      <br>© 2026 PDFCare · All rights reserved
+    </div>
+  </div>
+</footer>
+
+<script>
+  const categories = ['organize','optimize','to-pdf','from-pdf','edit','security'];
+
+  function filterTools(cat) {
+    // Update pills
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.pill').forEach(p => {
+      if (
+        (cat === 'all' && p.textContent.trim() === 'All') ||
+        (cat === 'organize' && p.textContent.trim() === 'Organize PDF') ||
+        (cat === 'optimize' && p.textContent.trim() === 'Optimize PDF') ||
+        (cat === 'to-pdf' && p.textContent.trim() === 'Convert to PDF') ||
+        (cat === 'from-pdf' && p.textContent.trim() === 'Convert from PDF') ||
+        (cat === 'edit' && p.textContent.trim() === 'Edit PDF') ||
+        (cat === 'security' && p.textContent.trim() === 'PDF Security')
+      ) p.classList.add('active');
+    });
+
+    if (cat === 'all') {
+      categories.forEach(c => {
+        document.getElementById('grid-' + c).style.display = 'grid';
+        document.getElementById('lbl-' + c).style.display = 'block';
+      });
+    } else {
+      categories.forEach(c => {
+        const show = c === cat;
+        document.getElementById('grid-' + c).style.display = show ? 'grid' : 'none';
+        document.getElementById('lbl-' + c).style.display = show ? 'block' : 'none';
+      });
+      // scroll to tools
+      setTimeout(() => {
+        document.querySelector('.tools-section').scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+  }
+
+  // Stagger animation for cards
+  document.querySelectorAll('.tool-card').forEach((card, i) => {
+    card.style.animationDelay = (i * 0.04) + 's';
+  });
+</script>
+</body>
+</html>

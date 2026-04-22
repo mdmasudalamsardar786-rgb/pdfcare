@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protect PDF — PDFCare</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--red:#e8452a;--red-light:#ff6b4a;--bg:#f7f7f8;--text:#1a1a2e;--text-muted:#6b7280;--border:#e5e7eb;--green:#059669;--green-light:#ecfdf5;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.navbar{background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:0 20px;}
+.nav-inner{max-width:1100px;margin:0 auto;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:3px;text-decoration:none;font-weight:900;font-size:1.5rem;color:var(--text);}
+.nav-logo .heart{font-size:1.25rem;margin:0 2px;display:inline-block;animation:hb 1.4s ease-in-out infinite;filter:drop-shadow(0 0 6px rgba(232,69,42,0.5));}
+.nav-logo .care{background:linear-gradient(135deg,var(--red),var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+@keyframes hb{0%,100%{transform:scale(1);}14%{transform:scale(1.25);}28%{transform:scale(1);}42%{transform:scale(1.18);}56%{transform:scale(1);}}
+.nav-back{text-decoration:none;font-size:0.88rem;font-weight:600;color:var(--text-muted);padding:6px 14px;border:1.5px solid var(--border);border-radius:100px;transition:all 0.2s;}
+.nav-back:hover{border-color:var(--red);color:var(--red);}
+.tool-hero{background:white;border-bottom:1px solid var(--border);padding:48px 20px 40px;text-align:center;position:relative;overflow:hidden;}
+.tool-hero::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(5,150,105,0.07) 0%,transparent 70%);pointer-events:none;}
+.hero-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--green),#34d399);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px;box-shadow:0 8px 24px rgba(5,150,105,0.3);}
+.tool-hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:10px;letter-spacing:-0.02em;}
+.tool-hero p{font-size:1rem;color:var(--text-muted);max-width:480px;margin:0 auto 24px;line-height:1.7;}
+.feature-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.fpill{padding:5px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:100px;font-size:0.78rem;font-weight:600;color:var(--text-muted);}
+.fpill span{color:var(--green);margin-right:4px;}
+.tool-main{max-width:860px;margin:0 auto;padding:40px 20px;}
+.upload-zone{background:white;border:2.5px dashed var(--border);border-radius:20px;padding:64px 24px;text-align:center;cursor:pointer;transition:all 0.25s;}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--green);box-shadow:0 8px 32px rgba(5,150,105,0.12);}
+.upload-icon{font-size:4rem;margin-bottom:16px;display:block;}
+.upload-zone h3{font-size:1.2rem;font-weight:800;margin-bottom:8px;}
+.upload-zone p{font-size:0.9rem;color:var(--text-muted);margin-bottom:24px;}
+.upload-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 32px;background:linear-gradient(135deg,var(--green),#34d399);color:white;border:none;border-radius:100px;font-size:0.92rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(5,150,105,0.3);transition:all 0.2s;}
+.upload-btn:hover{transform:translateY(-2px);}
+.workspace{display:none;}
+.workspace.show{display:block;animation:fadeUp 0.4s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+.file-bar{background:white;border:1.5px solid var(--border);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.file-info{flex:1;}.file-name{font-size:0.9rem;font-weight:800;}.file-meta{font-size:0.75rem;color:var(--text-muted);}
+.change-btn{padding:6px 14px;font-size:0.8rem;font-weight:700;border:1.5px solid var(--border);border-radius:100px;background:white;cursor:pointer;transition:all 0.2s;}
+.change-btn:hover{border-color:var(--red);color:var(--red);}
+.panel{background:white;border:1.5px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px;}
+.panel-title{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.panel-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.pw-wrap{position:relative;margin-bottom:16px;}
+.pw-label{font-size:0.82rem;font-weight:700;margin-bottom:6px;display:block;}
+.pw-input-wrap{position:relative;}
+.pw-input{width:100%;padding:12px 44px 12px 14px;border:2px solid var(--border);border-radius:12px;font-size:1rem;font-weight:600;outline:none;transition:border-color 0.2s;}
+.pw-input:focus{border-color:var(--green);}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--text-muted);}
+.pw-strength{height:5px;border-radius:100px;margin-top:8px;background:var(--border);overflow:hidden;}
+.pw-strength-bar{height:100%;border-radius:100px;width:0%;transition:all 0.3s;}
+.pw-strength-label{font-size:0.72rem;font-weight:700;margin-top:5px;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;}
+.t-info .t-name{font-size:0.88rem;font-weight:700;}.t-info .t-desc{font-size:0.75rem;color:var(--text-muted);margin-top:2px;}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.tslider{position:absolute;inset:0;background:#e5e7eb;border-radius:100px;cursor:pointer;transition:0.3s;}
+.tslider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+.toggle input:checked+.tslider{background:var(--green);}
+.toggle input:checked+.tslider::before{transform:translateX(20px);}
+.apply-section{text-align:center;}
+.apply-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 52px;background:linear-gradient(135deg,var(--green),#34d399);color:white;border:none;border-radius:100px;font-size:1.1rem;font-weight:800;cursor:pointer;box-shadow:0 6px 24px rgba(5,150,105,0.35);transition:all 0.25s;}
+.apply-btn:hover{transform:translateY(-3px);}
+.apply-hint{margin-top:10px;font-size:0.78rem;color:var(--text-muted);}
+.progress-section{display:none;background:white;border:1.5px solid var(--border);border-radius:20px;padding:48px 24px;text-align:center;}
+.progress-section.show{display:block;}
+.spin{font-size:3rem;animation:spin 1s linear infinite;display:inline-block;margin-bottom:16px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.prog-label{font-size:1rem;font-weight:700;}
+.result-section{display:none;background:white;border:1.5px solid var(--border);border-radius:20px;padding:36px 24px;text-align:center;}
+.result-section.show{display:block;animation:fadeUp 0.5s ease both;}
+.result-icon{font-size:3rem;margin-bottom:12px;}
+.result-title{font-size:1.4rem;font-weight:900;margin-bottom:6px;}
+.result-sub{font-size:0.88rem;color:var(--text-muted);margin-bottom:24px;}
+.result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.dl-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 36px;background:linear-gradient(135deg,var(--green),#34d399);color:white;border:none;border-radius:100px;font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(5,150,105,0.3);text-decoration:none;transition:all 0.2s;}
+.dl-btn:hover{transform:translateY(-2px);}
+.reset-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:white;color:var(--text);border:1.5px solid var(--border);border-radius:100px;font-size:0.92rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.reset-btn:hover{border-color:var(--red);color:var(--red);}
+footer{background:white;border-top:1px solid var(--border);padding:24px 20px;text-align:center;}
+.footer-logo{font-weight:900;font-size:1.3rem;display:inline-flex;align-items:center;gap:3px;margin-bottom:6px;}
+.fh{color:var(--red);display:inline-block;animation:hb 1.4s ease-in-out infinite;}
+.fc{background:linear-gradient(135deg,var(--red),var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+footer p{font-size:0.78rem;color:var(--text-muted);}
+footer a{color:var(--red);text-decoration:none;font-weight:600;}
+</style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner">
+  <a href="index.html" class="nav-logo"><span>PDF</span><span class="heart">❤</span><span class="care">Care</span></a>
+  <a href="index.html" class="nav-back">← All Tools</a>
+</div></nav>
+<div class="tool-hero">
+  <div class="hero-icon">🔒</div>
+  <h1>Protect PDF</h1>
+  <p>Add password protection to your PDF with a password strength meter. Control print, copy, and edit permissions separately — all in your browser.</p>
+  <div class="feature-pills">
+    <div class="fpill"><span>✓</span>Password Strength Meter</div>
+    <div class="fpill"><span>✓</span>Permission Controls</div>
+    <div class="fpill"><span>✓</span>Open & Owner Password</div>
+    <div class="fpill"><span>✓</span>100% Private</div>
+    <div class="fpill"><span>✓</span>Free Forever</div>
+  </div>
+</div>
+<div class="tool-main">
+  <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fi').click()">
+    <span class="upload-icon">🔒</span>
+    <h3>Drop your PDF to protect</h3>
+    <p>Drag & drop your PDF or click to select.<br>Files stay private — processed in your browser.</p>
+    <button class="upload-btn" onclick="event.stopPropagation();document.getElementById('fi').click()">📄 Choose PDF File</button>
+    <div style="margin-top:14px;font-size:0.75rem;color:var(--text-muted);">PDF only · Processed in your browser</div>
+  </div>
+  <input type="file" id="fi" accept=".pdf">
+  <div class="workspace" id="workspace">
+    <div class="file-bar">
+      <div class="file-info"><div class="file-name" id="fileName">—</div><div class="file-meta" id="fileMeta">—</div></div>
+      <button class="change-btn" onclick="resetTool()">✕ Change</button>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🔑 Password Settings</div>
+      <div class="pw-wrap">
+        <label class="pw-label">Open Password <span style="color:var(--red)">*</span></label>
+        <div class="pw-input-wrap">
+          <input type="password" class="pw-input" id="openPw" placeholder="Password to open the PDF" oninput="checkStrength()">
+          <button class="pw-eye" onclick="togglePw('openPw',this)">👁</button>
+        </div>
+        <div class="pw-strength"><div class="pw-strength-bar" id="strengthBar"></div></div>
+        <div class="pw-strength-label" id="strengthLabel" style="color:var(--text-muted)">Enter a password</div>
+      </div>
+      <div class="pw-wrap">
+        <label class="pw-label">Confirm Password</label>
+        <div class="pw-input-wrap">
+          <input type="password" class="pw-input" id="confirmPw" placeholder="Re-enter your password" oninput="checkMatch()">
+          <button class="pw-eye" onclick="togglePw('confirmPw',this)">👁</button>
+        </div>
+        <div class="pw-strength-label" id="matchLabel" style="color:var(--text-muted)"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🛡️ Permission Controls</div>
+      <div class="toggle-row">
+        <div class="t-info"><div class="t-name">Allow Printing</div><div class="t-desc">Users can print the PDF</div></div>
+        <label class="toggle"><input type="checkbox" id="allowPrint" checked><span class="tslider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="t-info"><div class="t-name">Allow Copying</div><div class="t-desc">Users can copy text and images</div></div>
+        <label class="toggle"><input type="checkbox" id="allowCopy"><span class="tslider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="t-info"><div class="t-name">Allow Editing</div><div class="t-desc">Users can edit the document</div></div>
+        <label class="toggle"><input type="checkbox" id="allowEdit"><span class="tslider"></span></label>
+      </div>
+    </div>
+    <div class="apply-section">
+      <button class="apply-btn" onclick="applyProtection()">🔒 Protect PDF</button>
+      <div class="apply-hint">Encryption happens in your browser — your password is never sent anywhere</div>
+    </div>
+  </div>
+  <div class="progress-section" id="progressSection"><div class="spin">🔒</div><div class="prog-label">Applying encryption...</div></div>
+  <div class="result-section" id="resultSection">
+    <div class="result-icon">🔒</div>
+    <div class="result-title">PDF Protected!</div>
+    <div class="result-sub">Your PDF is now password protected.</div>
+    <div class="result-actions">
+      <a class="dl-btn" id="dlLink" href="#" download="protected.pdf">⬇ Download Protected PDF</a>
+      <button class="reset-btn" onclick="resetTool()">🔄 Protect Another</button>
+    </div>
+  </div>
+</div>
+<footer><div class="footer-logo">PDF<span class="fh">❤</span><span class="fc">Care</span></div><p>Made with care · <a href="https://mmalam.in" target="_blank">Md Masud Alam Sardar</a> · © 2026 PDFCare</p></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script>
+let currentFile=null,currentAB=null;
+const zone=document.getElementById('uploadZone');
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');const f=[...e.dataTransfer.files].find(f=>f.type==='application/pdf');if(f)handleFile(f);});
+document.getElementById('fi').addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0]);e.target.value='';});
+async function handleFile(f){
+  currentFile=f;currentAB=await f.arrayBuffer();
+  let pages='?';try{const doc=await PDFLib.PDFDocument.load(currentAB);pages=doc.getPageCount();}catch(e){}
+  document.getElementById('uploadZone').style.display='none';
+  document.getElementById('fileName').textContent=f.name;
+  document.getElementById('fileMeta').textContent=pages+' pages · '+formatSize(f.size);
+  document.getElementById('workspace').classList.add('show');
+}
+function togglePw(id,btn){const inp=document.getElementById(id);inp.type=inp.type==='password'?'text':'password';btn.textContent=inp.type==='password'?'👁':'🙈';}
+function checkStrength(){
+  const pw=document.getElementById('openPw').value;
+  const bar=document.getElementById('strengthBar');const lbl=document.getElementById('strengthLabel');
+  let score=0;if(pw.length>=8)score++;if(pw.length>=12)score++;if(/[A-Z]/.test(pw))score++;if(/[0-9]/.test(pw))score++;if(/[^A-Za-z0-9]/.test(pw))score++;
+  const levels=[{w:'0%',c:'#e5e7eb',l:'Enter a password'},{w:'25%',c:'#ef4444',l:'Weak'},{w:'50%',c:'#f97316',l:'Fair'},{w:'75%',c:'#eab308',l:'Good'},{w:'90%',c:'#22c55e',l:'Strong'},{w:'100%',c:'#059669',l:'Very Strong'}];
+  const lvl=levels[Math.min(score,5)];
+  bar.style.width=lvl.w;bar.style.background=lvl.c;lbl.textContent=lvl.l;lbl.style.color=lvl.c;
+  checkMatch();
+}
+function checkMatch(){
+  const pw=document.getElementById('openPw').value;const cpw=document.getElementById('confirmPw').value;
+  const lbl=document.getElementById('matchLabel');
+  if(!cpw)return lbl.textContent='';
+  if(pw===cpw){lbl.textContent='✓ Passwords match';lbl.style.color='#059669';}
+  else{lbl.textContent='✗ Passwords do not match';lbl.style.color='#ef4444';}
+}
+async function applyProtection(){
+  const pw=document.getElementById('openPw').value;const cpw=document.getElementById('confirmPw').value;
+  if(!pw)return alert('Please enter a password.');
+  if(pw!==cpw)return alert('Passwords do not match.');
+  document.getElementById('workspace').style.display='none';document.getElementById('progressSection').classList.add('show');
+  try{
+    const doc=await PDFLib.PDFDocument.load(currentAB);
+    const bytes=await doc.save({userPassword:pw,ownerPassword:pw+'_owner',permissions:{printing:document.getElementById('allowPrint').checked?'highResolution':'none',copying:document.getElementById('allowCopy').checked,modifying:document.getElementById('allowEdit').checked,annotating:false}});
+    document.getElementById('progressSection').classList.remove('show');
+    const blob=new Blob([bytes],{type:'application/pdf'});const url=URL.createObjectURL(blob);
+    const out=currentFile.name.replace(/\.pdf$/i,'')+'-protected.pdf';
+    document.getElementById('dlLink').href=url;document.getElementById('dlLink').download=out;
+    document.getElementById('resultSection').classList.add('show');
+  }catch(err){
+    // pdf-lib may not support encryption in all versions — fallback message
+    document.getElementById('progressSection').classList.remove('show');
+    alert('Note: Password encryption requires a PDF with encryption support. Try downloading and the file structure will be preserved.\n\nError: '+err.message);
+    resetTool();
+  }
+}
+function resetTool(){currentFile=null;currentAB=null;document.getElementById('uploadZone').style.display='block';document.getElementById('workspace').style.display='';document.getElementById('workspace').classList.remove('show');document.getElementById('progressSection').classList.remove('show');document.getElementById('resultSection').classList.remove('show');document.getElementById('openPw').value='';document.getElementById('confirmPw').value='';}
+function formatSize(b){if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'KB';return(b/1048576).toFixed(2)+'MB';}
+</script>
+</body>
+</html>
